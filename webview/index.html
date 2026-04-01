@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>NPM Manager</title>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Tabs Header -->
+        <div class="tabs-header">
+            <div id="tab-browse" class="tab-item active" onclick="switchTab('browse')">
+                <span class="tab-icon">🔍</span> Browse
+            </div>
+            <div id="tab-installed" class="tab-item" onclick="switchTab('installed')">
+                <span class="tab-icon">📦</span> Installed
+            </div>
+            <div id="tab-updates" class="tab-item" onclick="switchTab('updates')">
+                <div class="tab-icon-wrapper">
+                    <span class="tab-icon">⬆️</span>
+                    <span id="update-badge" class="notification-badge" style="display: none;"></span>
+                </div>
+                Updates
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Loading Bar -->
+            <div id="loading-bar" class="loading-bar" style="display: none;">
+                <div class="loading-progress"></div>
+            </div>
+
+            <!-- Sticky Search Bar (Only for Browse) -->
+            <div id="browse-search" class="search-bar-sticky">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="package-search-input" class="search-input" placeholder="Search packages..." autofocus oninput="handleSearchInput(event)">
+                </div>
+            </div>
+
+            <!-- Updates Specific Header (Only for Updates) -->
+            <div id="updates-header" class="search-bar-sticky" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="updates-info" class="section-info">0 updates found</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="action-button secondary" onclick="checkUpdates()">
+                            <span id="refresh-icon">🔄</span> Refresh
+                        </button>
+                        <button id="update-all-btn" class="action-button primary" style="display: none;" onclick="updateAll()">
+                             Update All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Package List -->
+            <div id="package-list" class="package-list-scrollable">
+                <!-- Data populated by JS -->
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
