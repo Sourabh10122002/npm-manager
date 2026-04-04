@@ -59,11 +59,13 @@ window.addEventListener('message', event => {
     }
 });
 
-// Global functions for inline onclick (if still used) or just use listeners
+// Global functions for inline onclick
 window.switchTab = switchTab;
 window.installPackage = installPackage;
 window.uninstallPackage = uninstallPackage;
 window.updatePackage = updatePackage;
+window.updateAll = updateAll;
+window.checkUpdates = checkUpdates;
 
 // UI Actions
 function switchTab(tab) {
@@ -120,6 +122,15 @@ function setLoading(isLoading) {
     }
 }
 
+// SVG Icons
+const icons = {
+    search: `<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.2"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`,
+    box: `<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.2"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.97 4.44c-.31.17-.69.17-1 0L3.53 17.38c-.32-.17-.53-.5-.53-.88V7.5c0-.38.21-.71.53-.88l7.97-4.44c.31-.17.69-.17 1 0l7.97 4.44c.32.17.53.5.53.88v9zM12 4.15L5.04 8.02 12 11.89l6.96-3.87L12 4.15z"/></svg>`,
+    info: `<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
+    sparkle: `<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.2"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5 5.5-2.5-5.5-2.5z"/></svg>`,
+    trash: `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`
+};
+
 // Rendering Functions
 function renderBrowse() {
     if (activeTab !== 'browse') return;
@@ -127,8 +138,8 @@ function renderBrowse() {
     if (!searchQuery) {
         packageList.innerHTML = `
             <div class="empty-state">
-                <div style="font-size: 48px; opacity: 0.2;">🔍</div>
-                <p>Search for packages in the NPM registry</p>
+                ${icons.search}
+                <p>Find packages in the official NPM registry</p>
             </div>
         `;
         return;
@@ -137,7 +148,7 @@ function renderBrowse() {
     if (searchResults.length === 0 && !loading) {
         packageList.innerHTML = `
             <div class="empty-state">
-                <div style="font-size: 48px; opacity: 0.2;">ℹ️</div>
+                ${icons.info}
                 <p>No results found for "${searchQuery}"</p>
             </div>
         `;
@@ -153,7 +164,7 @@ function renderBrowse() {
             <p class="package-desc">${pkg.description || 'No description available.'}</p>
             <div class="package-footer">
                 <div class="package-meta">
-                    ${pkg.publisher ? `by ${pkg.publisher.username}` : ''}
+                    ${pkg.publisher ? `by ${pkg.publisher.username}` : 'unknown publisher'}
                 </div>
                 <div class="package-actions">
                     <button class="action-button primary" onclick="installPackage('${pkg.name}', false)">
@@ -177,8 +188,8 @@ function renderInstalled() {
     if (!hasDeps && !hasDevDeps && !loading) {
         packageList.innerHTML = `
             <div class="empty-state">
-                <div style="font-size: 48px; opacity: 0.2;">📚</div>
-                <p>No packages found in package.json</p>
+                ${icons.box}
+                <p>Your package.json is empty</p>
             </div>
         `;
         return;
@@ -194,9 +205,9 @@ function renderInstalled() {
                     <span class="package-name">${name}</span>
                     <span class="package-version">${version}</span>
                 </div>
-                <div class="package-actions-installed">
+                <div class="package-actions">
                     <button class="action-button danger" onclick="uninstallPackage('${name}')">
-                        🗑️ Uninstall
+                        ${icons.trash} Uninstall
                     </button>
                 </div>
             </div>
@@ -211,9 +222,9 @@ function renderInstalled() {
                     <span class="package-name">${name}</span>
                     <span class="package-version">${version}</span>
                 </div>
-                <div class="package-actions-installed">
+                <div class="package-actions">
                     <button class="action-button danger" onclick="uninstallPackage('${name}')">
-                        🗑️ Uninstall
+                        ${icons.trash} Uninstall
                     </button>
                 </div>
             </div>
@@ -233,7 +244,7 @@ function renderUpdates() {
     if (count === 0 && !loading) {
         packageList.innerHTML = `
             <div class="empty-state">
-                <div style="font-size: 48px; opacity: 0.2;">✨</div>
+                ${icons.sparkle}
                 <p>Everything is up to date!</p>
             </div>
         `;
@@ -246,7 +257,7 @@ function renderUpdates() {
                 <span class="package-name">${name}</span>
                 <div class="version-diff">
                     <span class="package-version old">${info.current}</span>
-                    → 
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5"><path d="M5 12h14m-7-7l7 7-7 7"/></svg>
                     <span class="package-version new">${info.latest}</span>
                 </div>
             </div>
