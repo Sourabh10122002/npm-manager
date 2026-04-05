@@ -6,7 +6,7 @@
   "publisher": "sourabh",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sourabh/npm-manager"
+    "url": "https://github.com/sourabh10122002/npm-manager"
   },
   "icon": "icon.png",
   "engines": {
@@ -33,7 +33,7 @@
         {
           "id": "npm-manager-sidebar",
           "title": "NPM Manager",
-          "icon": "$(package)"
+          "icon": "resources/sidebar-icon.svg"
         }
       ]
     },
@@ -43,6 +43,7 @@
           "type": "webview",
           "id": "npm-manager-view",
           "name": "Manage Packages",
+          "icon": "resources/sidebar-icon.svg",
           "visibility": "visible"
         }
       ]
