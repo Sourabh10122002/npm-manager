@@ -1,9 +1,9 @@
 {
-  "name": "npm-manager",
-  "displayName": "npm-manager",
-  "description": "Visual NPM package manager for VS Code, inspired by NuGet.",
-  "version": "0.1.0",
-  "publisher": "sourabh",
+  "name": "npm-manager-v2",
+  "displayName": "NPM Manager - Visual Package Explorer",
+  "description": "Visual NPM package manager for VS Code.",
+  "version": "0.1.2",
+  "publisher": "sourabhr10122002",
   "repository": {
     "type": "git",
     "url": "https://github.com/sourabh10122002/npm-manager"
@@ -64,7 +64,10 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "build": "npm run compile",
-    "package": "vsce package"
+    "package": "vsce package",
+    "publish:vscode": "vsce publish",
+    "publish:openvsx": "ovsx publish",
+    "publish": "npm run publish:vscode && npm run publish:openvsx"
   },
   "devDependencies": {
     "@types/node": "^16.11.7",

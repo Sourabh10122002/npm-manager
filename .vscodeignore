@@ -2,7 +2,6 @@
 .vscode-test/**
 out/**
 src/**
-node_modules/**
 tsconfig.json
 .gitignore
 .git/**
@@ -17,6 +16,8 @@ npm-manager-0.1.0.vsix
 /webview/package-lock.json
 /webview/tsconfig.*
 /webview/vite.config.*
+!/resources/sidebar-icon.svg
+!/resources/main-screenshot.png
 /webview/src/**
 /webview/public/**
 /webview/README.md
@@ -29,8 +30,11 @@ npm-manager-0.1.0.vsix
 /knowledge/**
 /brain/**
 # Keep essential production files
+!/webview/index.html
 !/webview/main.js
 !/webview/style.css
+!/webview/panel.js
+!/webview/panel-style.css
 !/dist/extension.js
 !/package.json
 !/icon.png

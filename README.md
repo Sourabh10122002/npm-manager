@@ -6,7 +6,11 @@
 
 **NPM Manager** provides a modern, high-performance visual interface for managing your Node.js project's dependencies directly within VS Code. Say goodbye to terminal-only package management and hello to a beautiful, dashboard-driven workflow.
 
-![NPM Manager Hero](icon.png)
+<img src="icon.png" width="128" alt="NPM Manager Icon">
+
+## 📺 Overview
+
+![NPM Manager Screenshot](resources/main-screenshot.png)
 
 ## 🚀 Features
 

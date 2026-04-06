@@ -24,12 +24,17 @@ const searchInput = document.getElementById('package-search-input');
 window.addEventListener('load', () => {
     switchTab('browse');
     
-    // Event Listeners
+    // Tab Event Listeners (no inline onclick - blocked by CSP)
+    document.getElementById('tab-browse')?.addEventListener('click', () => switchTab('browse'));
+    document.getElementById('tab-installed')?.addEventListener('click', () => switchTab('installed'));
+    document.getElementById('tab-updates')?.addEventListener('click', () => switchTab('updates'));
+
+    // Search
     searchInput.addEventListener('input', handleSearchInput);
     
+    // Updates buttons
     const refreshBtn = document.getElementById('refresh-btn');
     if (refreshBtn) refreshBtn.addEventListener('click', checkUpdates);
-
     if (updateAllBtn) updateAllBtn.addEventListener('click', updateAll);
 });
 
