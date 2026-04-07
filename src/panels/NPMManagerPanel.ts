@@ -77,6 +77,32 @@ export class NPMManagerPanel {
                     this._panel.webview.postMessage({ type: 'searchResults', value: results });
                     break;
                 }
+                case 'getAudit': {
+                    const audit = await npmManager.getAuditReport();
+                    this._panel.webview.postMessage({ type: 'auditData', value: audit });
+                    break;
+                }
+                case 'getSizes': {
+                    const packages = data.value as string[];
+                    const sizes: any = {};
+                    // Fetch sizes sequentially or with small concurrency to avoid rate limiting
+                    for (const pkg of packages) {
+                        const sizeInfo = await npmManager.getBundleSize(pkg);
+                        if (sizeInfo) sizes[pkg] = sizeInfo;
+                    }
+                    this._panel.webview.postMessage({ type: 'sizesData', value: sizes });
+                    break;
+                }
+                case 'getTree': {
+                    const tree = await npmManager.getDependencyTree();
+                    this._panel.webview.postMessage({ type: 'treeData', value: tree });
+                    break;
+                }
+                case 'getUnused': {
+                    const unused = await npmManager.getUnusedDependencies();
+                    this._panel.webview.postMessage({ type: 'unusedData', value: unused });
+                    break;
+                }
             }
         }, null, this._disposables);
     }
@@ -120,6 +146,9 @@ export class NPMManagerPanel {
         <button class="tab-btn active" data-tab="installed">Installed</button>
         <button class="tab-btn" data-tab="updates">Updates</button>
         <button class="tab-btn" data-tab="browse">Browse Registry</button>
+        <button class="tab-btn" data-tab="security">Security Audit</button>
+        <button class="tab-btn" data-tab="health">Package Health</button>
+        <button class="tab-btn" data-tab="graph">Dependency Graph</button>
     </div>
 
     <div class="toolbar" id="main-toolbar">
@@ -161,6 +190,41 @@ export class NPMManagerPanel {
             </div>
         </div>
         <div id="browse-results" class="browse-results"><p class="placeholder-text">Start typing to search packages...</p></div>
+    </div>
+
+    <div class="security-view" id="security-view" style="display:none;">
+        <div class="view-header">
+            <h2>NPM Audit Security Report</h2>
+            <button class="btn btn-primary" id="refresh-audit-btn">Run New Audit</button>
+        </div>
+        <div id="audit-results" class="audit-results"><div class="loading-state"><div class="spinner"></div><span>Running security audit...</span></div></div>
+    </div>
+
+    <div class="health-view" id="health-view" style="display:none;">
+        <div class="view-header">
+            <h2>Package Health & Performance</h2>
+            <button class="btn btn-primary" id="refresh-health-btn">Refresh Analysis</button>
+        </div>
+        <div class="health-grid">
+            <div class="health-card">
+                <h3>Bundle Size Impact</h3>
+                <div id="size-analysis" class="analysis-content"><div class="loading-state"><div class="spinner"></div><span>Fetching package sizes...</span></div></div>
+            </div>
+            <div class="health-card">
+                <h3>Unused Dependencies</h3>
+                <div id="unused-analysis" class="analysis-content"><div class="loading-state"><div class="spinner"></div><span>Scanning workspace...</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="graph-view" id="graph-view" style="display:none;">
+        <div class="view-header">
+            <h2>Dependency Relationship Graph</h2>
+            <button class="btn btn-primary" id="refresh-graph-btn">Refresh Graph</button>
+        </div>
+        <div class="graph-container" id="graph-container">
+            <div class="loading-state"><div class="spinner"></div><span>Generating dependency tree...</span></div>
+        </div>
     </div>
 
     <div class="install-bar" id="install-bar">
