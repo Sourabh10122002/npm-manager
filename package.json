@@ -2,7 +2,7 @@
   "name": "npm-manager-v2",
   "displayName": "NPM Manager - Visual Package Explorer",
   "description": "Visual NPM package manager for VS Code.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "sourabhr10122002",
   "repository": {
     "type": "git",
